@@ -4,7 +4,24 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "buildmacOS",
+            "type": "cppbuild",
+            "command": "make",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Builds the program uning the exisiting Makefile"
+        },
+        {
+            "label": "buildlinux",
             "type": "cppbuild",
             "command": "make",
             "args": [],

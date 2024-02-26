@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug",
+      "name": "Debug macOS",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/build/debug/play",
@@ -11,15 +11,16 @@
       "environment": [],
       "externalConsole": false,
       "MIMode": "lldb",
-      "preLaunchTask": "build"
+      "preLaunchTask": "buildmacOS"
     },
     {
-      "name": "C/C++ Runner: Debug Session",
+      "name": "Debug Linux",
       "type": "lldb",
       "request": "launch",
       "args": [],
-      "cwd": "/Users/giorgio6846/Code/os_independent/SpaceInvaders",
-      "program": "/Users/giorgio6846/Code/os_independent/SpaceInvaders/build/Debug/outDebug"
+      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}/build/debug/play",
+      "preLaunchTask": "buildlinux"
     }
   ]
 }
