@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include <chrono>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
@@ -12,9 +14,17 @@ struct {
 struct {
   int x;
   int y;
+  float speed = 10; 
 } ship;
 
-
+struct {
+  unsigned long long last_second;
+  unsigned long long last_frame;
+  unsigned long long delta_ns;
+  long double delta;
+  int frames;
+  int fps; 
+} state;
 
 int main(int argc, char* args[]) {
 
@@ -50,6 +60,23 @@ int main(int argc, char* args[]) {
   SDL_Event event;
   bool quit = false;
   while (quit == false) {
+
+    const int NS_PER_SEC = 1000000000;
+
+    unsigned long long now = std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now()).time_since_epoch().count();
+
+    state.delta_ns = now - state.last_frame;
+    state.delta = (long double) (state.delta_ns / NS_PER_SEC);
+    state.last_frame = now;  
+    state.frames += 1;
+
+    if ((now - state.last_second) > NS_PER_SEC) {
+      state.last_second = now;
+      state.fps = state.frames;
+      state.frames = 0;
+      std::cout << "FPS: " << state.fps << std::endl;
+    }
+
     while (SDL_PollEvent(&event)) {
       switch (event.type)
       {
@@ -61,11 +88,11 @@ int main(int argc, char* args[]) {
         switch (event.key.keysym.sym)
         {
         case SDLK_a:
-          ship.x = ship.x - 1;
+          ship.x -= ship.speed * state.delta;
           break;
         
         case SDLK_d:
-          ship.x = ship.x + 1;
+          ship.x += ship.speed * state.delta;
           break;
         
         default:
