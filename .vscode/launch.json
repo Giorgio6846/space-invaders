@@ -21,6 +21,14 @@
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/build/debug/play",
       "preLaunchTask": "buildlinux"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/giorgio6846/Code/os_independent/SpaceInvaders/src",
+      "program": "/Users/giorgio6846/Code/os_independent/SpaceInvaders/src/build/Debug/outDebug"
     }
   ]
 }
