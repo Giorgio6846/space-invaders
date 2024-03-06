@@ -162,7 +162,7 @@ void init_stage(gameState *state) {
   for (int y = 0; y < 3; y++) {
     for (int x = 0; x < 10; x++) {
       state->aliens->push_back(
-          new Alien({AlienTypeEnum::CYAN,
+          new Alien({AlienTypeEnum(rand() % 4),
                      index,
                      {(float)(10 + x * 14),
                       (float)SCREEN_HEIGHT - 100 + y * ROW_HEIGHT}}));
@@ -324,7 +324,22 @@ void update(gameState *state) {
     }
   }
 
-  // Remove projectiles & aliens
+  Box2f shipbox = ship_box(state);
+  for(int i = 0; i < state->projectiles->size(); i++) {
+    if (box_collide(shipbox, projectile_box(*state->projectiles->at(i)))) {
+      state->explosions->push_back(new Explosion(
+          {{state->ship.pos->x + 2, state->ship.pos->y + 2},
+           state->time.last_frame}));
+      state->lives -= 1;
+      state->projectiles->erase(state->projectiles->begin() + i);
+
+      if(state->lives == 0) {
+        exit(1);
+      }
+    }
+  }
+
+  // Collision projectiles & aliens
   for (int i = 0; i < state->aliens->size(); i++) {
     Box2f box = alien_box(*state->aliens->at(i));
     for (int j = 0; j < state->projectiles->size(); j++) {
@@ -339,20 +354,20 @@ void update(gameState *state) {
         }
       }
     }
-  }
-
-  
-
-  Box2f shipbox = ship_box(state);
-  for(int i = 0; i < state->projectiles->size(); i++) {
-    if (box_collide(shipbox, projectile_box(*state->projectiles->at(i)))) {
+    
+    if (box_collide(box, shipbox)) {
+      state->aliens->erase(state->aliens->begin() + i);
       state->explosions->push_back(new Explosion(
-          {{state->ship.pos->x + 2, state->ship.pos->y + 2},
+          {{state->aliens->at(i)->pos.x + 2, state->aliens->at(i)->pos.y + 2},
            state->time.last_frame}));
+
+      state->explosions->push_back(
+          new Explosion({{state->ship.pos->x + 2, state->ship.pos->y + 2},
+                         state->time.last_frame}));
       state->lives -= 1;
       state->projectiles->erase(state->projectiles->begin() + i);
 
-      if(state->lives == 0) {
+      if (state->lives == 0) {
         exit(1);
       }
     }
@@ -428,7 +443,7 @@ void render(gameState *state) {
     }
   }
 
-  for(int i = 0; i < 3; i++) {
+  for(int i = 0; i < state->lives; i++) {
     draw_sprite(state, Vector2i({0, 0}),
                 Vector2f({(float)2 + 11 * i, (float)2}));
   }
